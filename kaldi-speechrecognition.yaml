@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kaldi-speechrecognition
+  labels:
+    name: kaldi-speechrecognition
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kaldi-speechrecognition
+  namespace: kaldi-speechrecognition
+  labels:
+    app: kaldi-speechrecognition
+spec:
+  selector:
+    matchLabels:
+      app: kaldi-speechrecognition
+  template:
+    metadata:
+      labels:
+        app: kaldi-speechrecognition
+    spec:
+      containers:
+        - name: kaldi-frontend
+          image: registry.local:31500/kaldi-speechrecognition
+          ports:
+            - containerPort: 8888
+              name: jupyter
+              protocol: TCP
+          args:
+            - jupyter
+            - lab
+            - --ip=0.0.0.0
+            - --no-browser
+            - --allow-root
+            - --port=8888
+            - --ServerApp.token=''
+            - --ServerApp.password=''
+            - --ServerApp.allow_origin='*'
+            - --ServerApp.base_url=/
+          volumeMounts:
+            - name: kaldi-storage
+              mountPath: /Kaldi/data
+        - name: kaldi-backend
+          image: registry.local:31500/kaldi-speechrecognition-server
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: kaldi-storage
+              mountPath: /data
+      initContainers:
+        - name: prepare-data
+          image: registry.local:31500/kaldi-speechrecognition-server
+          command:
+            - /workspace/scripts/docker/prepare_data.sh
+          volumeMounts:
+            - name: kaldi-storage
+              mountPath: /data
+      subdomain: default-subdomain
+      volumes:
+        - name: dshm
+          emptyDir: {}
+        - name: kaldi-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kaldi-frontend
+  namespace: kaldi-speechrecognition
+spec:
+  ports:
+    - name: jupyter
+      nodePort: 30888
+      port: 8888
+      protocol: TCP
+      targetPort: 8888
+  selector:
+    app: kaldi-speechrecognition
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kaldi-backend
+  namespace: kaldi-speechrecognition
+spec:
+  ports:
+    - name: "triton-http"
+      port: 8000
+      targetPort: 8000
+    - name: "triton-grpc"
+      port: 8001
+      targetPort: 8001
+    - name: "triton-metrics"
+      port: 8002
+      targetPort: 8002
+  selector:
+    app: kaldi-speechrecognition

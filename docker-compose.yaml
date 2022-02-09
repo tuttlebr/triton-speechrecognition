@@ -1,0 +1,12 @@
+services:
+  kaldi-speechrecognition-server:
+    image: registry.local:31500/kaldi-speechrecognition-server
+    build:
+      context: SpeechRecognition
+      dockerfile: Dockerfile
+
+  kaldi-speechrecognition:
+    image: registry.local:31500/kaldi-speechrecognition
+    build:
+      context: SpeechRecognition
+      dockerfile: Dockerfile.notebook
