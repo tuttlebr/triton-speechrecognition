@@ -1,13 +1,13 @@
 apiVersion: run.tanzu.vmware.com/v1alpha2
 kind: TanzuKubernetesCluster
 metadata:
-  name: bt-nvaie-cluster
-  namespace: bt-nvaie-ns
+  name: nvaie-cluster
+  namespace: nvaie-ns
 spec:
   topology:
     controlPlane:
       replicas: 1
-      vmClass: best-effort-large
+      vmClass: best-effort-2xlarge
       tkr:
         reference:
           name: v1.20.8---vmware.1-tkg.2
@@ -16,16 +16,7 @@ spec:
         - name: containerd
           mountPath: /var/lib/containerd
           capacity:
-            storage: 128G1
-        - name: docker
-          mountPath: /var/lib/docker
-          capacity:
-            storage: 128G1
-        - name: storage
-          mountPath: /storage
-          capacity:
-            storage: 128G1
-
+            storage: 128Gi
     nodePools:
       - name: nodepool
         replicas: 2
@@ -38,12 +29,7 @@ spec:
           - name: containerd
             mountPath: /var/lib/containerd
             capacity:
-              storage: 128G1
-          - name: docker
-            mountPath: /var/lib/docker
-            capacity:
-              storage: 128G1
-          - name: storage
-            mountPath: /storage
-            capacity:
-              storage: 128G1
+              storage: 128Gi
+  settings:
+    storage:
+      defaultClass: tanzu
