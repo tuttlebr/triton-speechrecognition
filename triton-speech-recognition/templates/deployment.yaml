@@ -15,11 +15,20 @@ spec:
     spec:
       containers:
         - name: triton-frontend
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
+          image: "{{ .Values.frontEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.frontEndImage.pullPolicy }}
           ports:
-            - containerPort: 8888
-              name: jupyter
+            - name: jupyter
+              containerPort: 8888
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           args:
             - jupyter
             - lab
@@ -35,10 +44,10 @@ spec:
             - name: triton-storage
               mountPath: /Kaldi/data
         - name: triton-backend
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+          image: "{{ .Values.backEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
           resources:
-            limits:
-              nvidia.com/gpu: 1
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: dshm
               mountPath: /dev/shm
@@ -46,7 +55,8 @@ spec:
               mountPath: /data
       initContainers:
         - name: prepare-data
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+          image: "{{ .Values.backEndImage.repository }}:{{ .Values.backEndImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
           command:
             - /workspace/scripts/docker/prepare_data.sh
           volumeMounts:
@@ -58,36 +68,3 @@ spec:
           emptyDir: {}
         - name: triton-storage
           emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: triton-frontend
-spec:
-  ports:
-    - name: jupyter
-      nodePort: 30888
-      port: 8888
-      protocol: TCP
-      targetPort: 8888
-  selector:
-    app: triton-speech-recognition
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: triton-backend
-spec:
-  ports:
-    - name: "triton-http"
-      port: 8000
-      targetPort: 8000
-    - name: "triton-grpc"
-      port: 8001
-      targetPort: 8001
-    - name: "triton-metrics"
-      port: 8002
-      targetPort: 8002
-  selector:
-    app: triton-speech-recognition

@@ -1,12 +1,12 @@
 services:
   kaldi-speechrecognition-server:
-    image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+    image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server:0.1.0
     build:
       context: SpeechRecognition
       dockerfile: Dockerfile
 
   kaldi-speechrecognition:
-    image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
+    image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition:0.1.0
     build:
       context: SpeechRecognition
       dockerfile: Dockerfile.notebook
