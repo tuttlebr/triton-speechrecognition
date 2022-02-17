@@ -13,6 +13,8 @@ spec:
       labels:
         app: triton-speech-recognition
     spec:
+      imagePullSecrets:
+        - name: ngc-secret
       containers:
         - name: triton-frontend
           image: "{{ .Values.frontEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"

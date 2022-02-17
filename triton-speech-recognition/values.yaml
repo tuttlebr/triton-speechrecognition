@@ -9,6 +9,8 @@ frontEndImage:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+  imagePullSecrets:
+    - ngc-secret
 frontEndName: triton-frontend
 
 backEndImage:
@@ -30,3 +32,9 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     nvidia.com/gpu: 1
+
+imageCredentials:
+  registry: nvcr.io
+  username: $oauthtoken
+  password: 'api-key'
+  email: 'user@nvidia.com'
