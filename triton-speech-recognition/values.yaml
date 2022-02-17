@@ -6,7 +6,7 @@ replicaCount: 1
 
 frontEndImage:
   repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   imagePullSecrets:
@@ -15,7 +15,7 @@ frontEndName: triton-frontend
 
 backEndImage:
   repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 backEndName: triton-backend
@@ -25,7 +25,7 @@ service:
   port: 8888
   nodePort: 30888
 
-resources: 
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -33,8 +33,20 @@ resources:
   limits:
     nvidia.com/gpu: 1
 
+affinity:
+  # The selected GPU should have at least 20GB memory. Add values to values list.
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: nvidia.com/gpu.memory
+              operator: In
+              values:
+                - "20480"
+                - "24268"
+
 imageCredentials:
   registry: nvcr.io
   username: $oauthtoken
-  password: 'api-key'
-  email: 'user@nvidia.com'
+  password: "api-key"
+  email: "user@nvidia.com"

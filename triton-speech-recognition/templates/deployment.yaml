@@ -14,15 +14,7 @@ spec:
         app: triton-speech-recognition
     spec:
       affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                - key: nvidia.com/gpu.memory
-                  operator: In
-                  values:
-                  - "20480"
-                  - "24268"
+        {{- toYaml .Values.affinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
       containers:
