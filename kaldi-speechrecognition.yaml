@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: kaldi-frontend
-          image: registry.local:31500/kaldi-speechrecognition
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
           ports:
             - containerPort: 8888
               name: jupyter
@@ -43,7 +43,7 @@ spec:
             - name: kaldi-storage
               mountPath: /Kaldi/data
         - name: kaldi-backend
-          image: registry.local:31500/kaldi-speechrecognition-server
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
           resources:
             limits:
               nvidia.com/gpu: 1
@@ -54,7 +54,7 @@ spec:
               mountPath: /data
       initContainers:
         - name: prepare-data
-          image: registry.local:31500/kaldi-speechrecognition-server
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
           command:
             - /workspace/scripts/docker/prepare_data.sh
           volumeMounts:
