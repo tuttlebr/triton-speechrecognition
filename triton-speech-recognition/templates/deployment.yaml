@@ -13,6 +13,16 @@ spec:
       labels:
         app: triton-speech-recognition
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nvidia.com/gpu.memory
+                  operator: In
+                  values:
+                  - "20480"
+                  - "24268"
       imagePullSecrets:
         - name: ngc-secret
       containers:
@@ -23,14 +33,6 @@ spec:
             - name: jupyter
               containerPort: 8888
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           args:
             - jupyter
             - lab
@@ -60,7 +62,7 @@ spec:
           image: "{{ .Values.backEndImage.repository }}:{{ .Values.backEndImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
           command:
-            - /workspace/scripts/docker/prepare_data.sh
+            - /workspace/scripts/prepare_data.sh
           volumeMounts:
             - name: triton-storage
               mountPath: /data

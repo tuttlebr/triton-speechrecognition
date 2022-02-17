@@ -1,4 +1,7 @@
-1. Get the Triton Speech Recognition Demo application URL by running these commands:
-export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services triton-frontend)
-export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
-echo http://$NODE_IP:$NODE_PORT
+1. There is a initialization container which downloads artifacts. You can monitor it's progress by running the following command:
+    kubectl get all -l app=triton-speech-recognition -o wide
+
+2. Get the Triton Speech Recognition Demo application URL by running these commands:
+    export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services triton-frontend)
+    export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+    echo http://$NODE_IP:$NODE_PORT

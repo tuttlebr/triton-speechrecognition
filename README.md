@@ -69,17 +69,12 @@ This repository contains Dockerfiles and Kubernetes yamls which extend the Kaldi
 
    [NVIDIA GPU Operator](https://docs.nvidia.com/ai-enterprise/deployment-guide/dg-gpu-operator.html)
 
-3. Build images
-
+3. Deploy Helm Chart
+   
    ```bash
-   docker-compose build
-   docker-compose push
-   ```
-
-4. Make Deployment
-
-   ```bash
-   kubectl -f kaldi-speechrecognition.yaml create
+   helm install triton triton-speech-recognition \
+      --set imageCredentials.password=<NGC_REGISTRY_API_KEY> \
+      --set imageCredentials.email=<NGC_REGISTRY_EMAIL>
    ```
 
 ## Performance

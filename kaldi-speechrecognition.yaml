@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: triton-frontend
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition:0.1.0
           ports:
             - containerPort: 8888
               name: jupyter
@@ -35,7 +35,7 @@ spec:
             - name: triton-storage
               mountPath: /Kaldi/data
         - name: triton-backend
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server:0.1.0
           resources:
             limits:
               nvidia.com/gpu: 1
@@ -46,9 +46,9 @@ spec:
               mountPath: /data
       initContainers:
         - name: prepare-data
-          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+          image: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server:0.1.0
           command:
-            - /workspace/scripts/docker/prepare_data.sh
+            - /workspace/scripts/prepare_data.sh
           volumeMounts:
             - name: triton-storage
               mountPath: /data
