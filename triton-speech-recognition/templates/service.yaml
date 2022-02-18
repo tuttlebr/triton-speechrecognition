@@ -12,7 +12,7 @@ spec:
       protocol: TCP
       targetPort: 8888
   selector:
-    app: triton-speech-recognition-frontend
+    app: triton-speech-recognition
   type: NodePort
 ---
 apiVersion: v1
@@ -39,5 +39,14 @@ spec:
       protocol: TCP
       targetPort: 8002
   selector:
-    app: triton-speech-recognition-backend
+    app: triton-speech-recognition
   type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-subdomain
+spec:
+  selector:
+    name: triton-subdomain
+  clusterIP: None

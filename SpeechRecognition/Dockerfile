@@ -92,6 +92,7 @@ RUN set -eux; \
         gawk \
         libatlas3-base \
         libtool \
+        net-tools \
         python${PYTHON_VER} \
         python${PYTHON_VER}-dev \
         sox \

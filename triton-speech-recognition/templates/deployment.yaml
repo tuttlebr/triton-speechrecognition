@@ -13,8 +13,11 @@ spec:
       labels:
         app: triton-speech-recognition
     spec:
+      affinity: 
+        {{- toYaml .Values.frontendAffinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
+      subdomain: default-subdomain
       containers:
         - name: triton-speech-recognition-frontend
           image: "{{ .Values.frontEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
@@ -39,6 +42,9 @@ spec:
               mountPath: /dev/shm
             - name: triton-frontend-storage
               mountPath: /Kaldi/data
+          resources: 
+            {{- toYaml .Values.resources | nindent 12 }}
+      nodeName: {{ .Values.frontendNodeName }}
       initContainers:
         - name: init-data
           image: "{{ .Values.backEndImage.repository }}:{{ .Values.backEndImage.tag | default .Chart.AppVersion }}"
@@ -71,9 +77,10 @@ spec:
         app: triton-speech-recognition
     spec:
       affinity: 
-        {{- toYaml .Values.affinity | nindent 12 }}
+        {{- toYaml .Values.backendAffinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
+      subdomain: default-subdomain
       containers:
         - name: triton-backend
           image: "{{ .Values.backEndImage.repository }}:{{ .Chart.AppVersion }}"
