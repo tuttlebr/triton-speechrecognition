@@ -104,7 +104,7 @@ spec:
         - name: init-server-config
           image: "{{ .Values.backEndImage.repository }}:{{ .Values.backEndImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
-          command: ['sh', '-c', "until nslookup triton-frontend.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for triton-frontend init...; sleep 2; done"]
+          command: ['sh', '-c', 'echo Waiting for frontend app to start... && sleep 60']
       volumes:
         - name: dshm
           emptyDir: {}
