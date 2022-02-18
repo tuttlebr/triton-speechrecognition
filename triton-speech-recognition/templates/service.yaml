@@ -7,12 +7,12 @@ metadata:
 spec:
   ports:
     - name: jupyter
-      nodePort: {{ .Values.service.nodePort }}
-      port: {{ .Values.service.port }}
+      nodePort: {{ .Values.serviceFrontend.nodePort }}
+      port: 8888
       protocol: TCP
-      targetPort: {{ .Values.service.port }}
+      targetPort: 8888
   selector:
-    app: triton-speech-recognition
+    app: triton-speech-recognition-frontend
   type: NodePort
 ---
 apiVersion: v1
@@ -23,14 +23,21 @@ metadata:
     app: triton-speech-recognition
 spec:
   ports:
-    - name: "triton-http"
+    - name: http
+      nodePort: {{ .Values.serviceBackend.nodePortHTTP }}
       port: 8000
+      protocol: TCP
       targetPort: 8000
-    - name: "triton-grpc"
+    - name: grpc
+      nodePort: {{ .Values.serviceBackend.nodePortGRPC }}
       port: 8001
+      protocol: TCP
       targetPort: 8001
-    - name: "triton-metrics"
+    - name: metrics
+      nodePort: {{ .Values.serviceBackend.nodePortMetrics }}
       port: 8002
+      protocol: TCP
       targetPort: 8002
   selector:
-    app: triton-speech-recognition
+    app: triton-speech-recognition-backend
+  type: NodePort

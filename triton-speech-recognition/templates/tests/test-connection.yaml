@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "triton-speech-recognition.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "triton-speech-recognition.fullname" . }}:{{ .Values.serviceFrontend.nodePort }}']
   restartPolicy: Never

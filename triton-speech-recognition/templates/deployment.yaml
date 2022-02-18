@@ -13,12 +13,10 @@ spec:
       labels:
         app: triton-speech-recognition
     spec:
-      affinity:
-        {{- toYaml .Values.affinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
       containers:
-        - name: triton-frontend
+        - name: triton-speech-recognition-frontend
           image: "{{ .Values.frontEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.frontEndImage.pullPolicy }}
           ports:
@@ -37,30 +35,69 @@ spec:
             - --ServerApp.allow_origin='*'
             - --ServerApp.base_url=/
           volumeMounts:
-            - name: triton-storage
-              mountPath: /Kaldi/data
-        - name: triton-backend
-          image: "{{ .Values.backEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
             - name: dshm
               mountPath: /dev/shm
-            - name: triton-storage
-              mountPath: /data
+            - name: triton-frontend-storage
+              mountPath: /Kaldi/data
       initContainers:
-        - name: prepare-data
+        - name: init-data
           image: "{{ .Values.backEndImage.repository }}:{{ .Values.backEndImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
           command:
             - /workspace/scripts/prepare_data.sh
           volumeMounts:
-            - name: triton-storage
+            - name: triton-frontend-storage
               mountPath: /data
-      subdomain: default-subdomain
       volumes:
         - name: dshm
           emptyDir: {}
-        - name: triton-storage
+        - name: triton-frontend-storage
+          persistentVolumeClaim:
+            claimName: triton-storage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triton-speech-recognition-backend
+  labels:
+    app: triton-speech-recognition
+spec:
+  selector:
+    matchLabels:
+      app: triton-speech-recognition
+  template:
+    metadata:
+      labels:
+        app: triton-speech-recognition
+    spec:
+      affinity: 
+        {{- toYaml .Values.affinity | nindent 12 }}
+      imagePullSecrets:
+        - name: ngc-secret
+      containers:
+        - name: triton-backend
+          image: "{{ .Values.backEndImage.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.backEndImage.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: grpc
+              containerPort: 8001
+              protocol: TCP
+            - name: metrics
+              containerPort: 8002
+              protocol: TCP
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: triton-backend-storage
+              mountPath: /data
+          resources: 
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: dshm
           emptyDir: {}
+        - name: triton-backend-storage
+          persistentVolumeClaim:
+            claimName: triton-storage

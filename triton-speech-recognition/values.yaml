@@ -1,40 +1,10 @@
-# Default values for triton-speech-recognition.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
-frontEndImage:
-  repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
-  pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-  imagePullSecrets:
-    - ngc-secret
-frontEndName: triton-frontend
-
-backEndImage:
-  repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
-  pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-backEndName: triton-backend
-
-service:
-  type: nodePort
-  port: 8888
-  nodePort: 30888
-
 resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     nvidia.com/gpu: 1
 
 affinity:
-  # The selected GPU should have at least 20GB memory. Add values to values list.
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
@@ -50,3 +20,25 @@ imageCredentials:
   username: $oauthtoken
   password: "api-key"
   email: "user@nvidia.com"
+
+frontEndImage:
+  repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition
+  pullPolicy: Always
+  tag: ""
+  imagePullSecrets:
+    - ngc-secret
+
+backEndImage:
+  repository: nvcr.io/nvidian/sae/k8s-triton-speech-recognition-server
+  pullPolicy: Always
+  tag: ""
+  imagePullSecrets:
+    - ngc-secret
+
+serviceFrontend:
+  nodePort: 30888
+
+serviceBackend:
+  nodePortHTTP: 30800
+  nodePortGRPC: 30801
+  nodePortMetrics: 30802
