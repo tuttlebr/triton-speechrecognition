@@ -6,7 +6,7 @@ metadata:
     app: triton-speech-recognition
 spec:
   accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
   resources:
     requests:
       storage: 64Gi
