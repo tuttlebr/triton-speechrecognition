@@ -113,6 +113,7 @@ spec:
           volumeMounts:
             - name: triton-backend-storage
               mountPath: /data
+              readOnly: true
       volumes:
         - name: dshm
           emptyDir: {}
