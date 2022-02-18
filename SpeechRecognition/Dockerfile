@@ -88,6 +88,7 @@ RUN set -eux; \
         automake \
         autoconf \
         cmake \
+        dnsutils \
         flac \
         gawk \
         libatlas3-base \
