@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: triton-sc
+  labels:
+    app: triton-speech-recognition
+provisioner: k8s-sigs.io/nfs-subdir-external-provisioner
+parameters:
+  pathPattern: "${.PVC.namespace}-${.PVC.name}"
+  archiveOnDelete: "false"

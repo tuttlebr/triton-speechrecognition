@@ -1,12 +1,13 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: triton-storage
+  name: triton-pvc
   labels:
     app: triton-speech-recognition
 spec:
+  storageClassName: triton-sc
   accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
   resources:
     requests:
       storage: 64Gi

@@ -5,14 +5,14 @@ resources:
     nvidia.com/gpu: 1
 
 frontendAffinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "olympus-01"
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #       - matchExpressions:
+  #           - key: kubernetes.io/hostname
+  #             operator: In
+  #             values:
+  #               - "olympus-01"
 
 backendAffinity:
   nodeAffinity:
@@ -51,3 +51,7 @@ serviceBackend:
   nodePortHTTP: 30800
   nodePortGRPC: 30801
   nodePortMetrics: 30802
+  
+nfs:
+  path: /volume1/brandon/repositories
+  server: 192.168.1.232
