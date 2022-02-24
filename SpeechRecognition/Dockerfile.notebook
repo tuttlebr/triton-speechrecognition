@@ -16,7 +16,6 @@ ARG KALDI_IMAGE=nvcr.io/nvidia/kaldi:21.08-py3
 ARG PYTHON_VER=3.8
 ARG MAKEFLAGS=-j$(nproc)
 
-
 #
 # Kaldi shared library dependencies
 #
@@ -114,6 +113,7 @@ COPY scripts /workspace/scripts
 # Setup environment and entrypoint
 ENV LD_LIBRARY_PATH /opt/kaldi/src/lib/:/opt/tritonserver/lib:$LD_LIBRARY_PATH
 
+
 # Python sound processing dependencies
 RUN set -eux; \
     apt-get update; \
@@ -122,6 +122,7 @@ RUN set -eux; \
     libcurl4-openssl-dev \
     libb64-dev \
     libsndfile1 \
+    net-tools \
     portaudio*-dev; \
     rm -rf /var/lib/apt/lists/*
 

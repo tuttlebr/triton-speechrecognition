@@ -8,25 +8,25 @@ parameters [
   {
     key: "config_filename"
     value { 
-      string_value: "/data/models/LibriSpeech/conf/online.conf"
+      string_value: "/Kaldi/data/models/LibriSpeech/conf/online.conf"
     }
   },
   {
     key: "nnet3_rxfilename"
     value { 
-      string_value: "/data/models/LibriSpeech/final.mdl"
+      string_value: "/Kaldi/data/models/LibriSpeech/final.mdl"
     }
   },
   {
     key: "fst_rxfilename"
     value { 
-      string_value: "/data/models/LibriSpeech/HCLG.fst"
+      string_value: "/Kaldi/data/models/LibriSpeech/HCLG.fst"
     }
   },
   {
     key: "word_syms_rxfilename"
     value { 
-      string_value: "/data/models/LibriSpeech/words.txt"
+      string_value: "/Kaldi/data/models/LibriSpeech/words.txt"
     }
   },
   {

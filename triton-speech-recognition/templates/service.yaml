@@ -1,10 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: triton-backend
+  name: triton-speech-recognition-backend
   labels:
+    run: triton-speech-recognition-backend
     app: triton-speech-recognition
 spec:
+  type: LoadBalancer
+  externalIPs: 
+    - 172.42.42.1
   ports:
     - name: http
       nodePort: {{ .Values.serviceBackend.nodePortHTTP }}
@@ -22,16 +26,17 @@ spec:
       protocol: TCP
       targetPort: 8002
   selector:
-    app: triton-speech-recognition
-  type: NodePort
+    run: triton-speech-recognition-backend
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: triton-frontend
+  name: triton-speech-recognition-frontend
   labels:
     app: triton-speech-recognition
+    run: triton-speech-recognition-frontend
 spec:
+  type: NodePort
   ports:
     - name: jupyter
       nodePort: {{ .Values.serviceFrontend.nodePort }}
@@ -39,14 +44,4 @@ spec:
       protocol: TCP
       targetPort: 8888
   selector:
-    app: triton-speech-recognition
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: default-subdomain
-spec:
-  selector:
-    name: triton-subdomain
-  clusterIP: None
+    run: triton-speech-recognition-frontend

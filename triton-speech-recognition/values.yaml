@@ -5,24 +5,24 @@ resources:
     nvidia.com/gpu: 1
 
 frontendAffinity:
-  # nodeAffinity:
-  #   requiredDuringSchedulingIgnoredDuringExecution:
-  #     nodeSelectorTerms:
-  #       - matchExpressions:
-  #           - key: kubernetes.io/hostname
-  #             operator: In
-  #             values:
-  #               - "olympus-01"
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - "olympus-01"
 
 backendAffinity:
-  # nodeAffinity:
-  #   requiredDuringSchedulingIgnoredDuringExecution:
-  #     nodeSelectorTerms:
-  #       - matchExpressions:
-  #           - key: kubernetes.io/hostname
-  #             operator: In
-  #             values:
-  #               - "olympus-02"
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - "olympus-02"
 
 imageCredentials:
   registry: nvcr.io
@@ -53,5 +53,5 @@ serviceBackend:
   nodePortMetrics: 30802
   
 nfs:
-  path: /volume1/brandon/repositories
+  path: /volume1/brandon/triton-sc
   server: 192.168.1.232

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-WORKSPACE=/data/
+WORKSPACE=/Kaldi/data/
 KALDI_ROOT=/opt/kaldi/
 
 model=LibriSpeech

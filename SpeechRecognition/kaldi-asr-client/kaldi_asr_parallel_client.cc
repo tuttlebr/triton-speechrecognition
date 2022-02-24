@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   std::string url = "localhost:8001";
   std::string model_name = "kaldi_online";
   std::string wav_rspecifier =
-      "scp:/data/datasets/LibriSpeech/test_clean/wav_conv.scp";
+      "scp:/Kaldi/data/datasets/LibriSpeech/test_clean/wav_conv.scp";
   int chunk_length = 8160;
   size_t nchannels = 1000;
   int niterations = 5;
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
     }
   };
 
-  std::cout << "Opening GRPC contextes..." << std::flush;
+  std::cout << "Opening GRPC contexts..." << std::flush;
   std::unordered_map<uint64_t, std::string> corr_id_and_keys;
   TritonASRClient asr_client(url, model_name, nclients, print_results,
                              print_partial_results, ctm, samp_freq);
@@ -266,7 +266,7 @@ int main(int argc, char** argv) {
   asr_client.PrintStats(
       online,
       !online);  // Print latency if online, do not print throughput if online
-  asr_client.WriteLatticesToFile("ark:|gzip -c > /data/results/lat.cuda-asr.gz",
+  asr_client.WriteLatticesToFile("ark:|gzip -c > /Kaldi/data/results/lat.cuda-asr.gz",
                                  corr_id_and_keys);
 
   return 0;

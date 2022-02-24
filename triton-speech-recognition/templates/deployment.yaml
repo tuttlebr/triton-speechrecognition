@@ -3,20 +3,24 @@ kind: Deployment
 metadata:
   name: triton-speech-recognition-backend
   labels:
+    run: triton-speech-recognition-backend
     app: triton-speech-recognition
 spec:
   selector:
     matchLabels:
+      run: triton-speech-recognition-backend
       app: triton-speech-recognition
   template:
     metadata:
       labels:
+        run: triton-speech-recognition-backend
         app: triton-speech-recognition
     spec:
       affinity: {{- toYaml .Values.backendAffinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
-      subdomain: default-subdomain
+      hostname: triton-backend
+      setHostnameAsFQDN: true
       containers:
         - name: triton-backend
           image: "{{ .Values.backEndImage.repository }}:{{ .Chart.AppVersion }}"
@@ -35,7 +39,7 @@ spec:
             - name: dshm
               mountPath: /dev/shm
             - name: triton-backend-storage
-              mountPath: /data
+              mountPath: /Kaldi/data
           resources: {{- toYaml .Values.resources | nindent 12 }}
       nodeName: {{ .Values.backendNodeName }}
       initContainers:
@@ -46,11 +50,11 @@ spec:
           args:
             [
               "-c",
-              "while ! test -f /data/models/LibriSpeech/conf/online.conf; do echo Waiting for frontend... && sleep 2 ; done",
+              "while ! test -f /Kaldi/data/models/LibriSpeech/conf/online.conf; do echo Waiting for frontend... && sleep 2 ; done",
             ]
           volumeMounts:
             - name: triton-backend-storage
-              mountPath: /data
+              mountPath: /Kaldi/data
       volumes:
         - name: dshm
           emptyDir: {}
@@ -61,22 +65,25 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: triton-speech-recognition
+  name: triton-speech-recognition-frontend
   labels:
+    run: triton-speech-recognition-frontend
     app: triton-speech-recognition
 spec:
   selector:
     matchLabels:
+      run: triton-speech-recognition-frontend
       app: triton-speech-recognition
   template:
     metadata:
-      labels:
+      labels: 
+        run: triton-speech-recognition-frontend
         app: triton-speech-recognition
     spec:
       affinity: {{- toYaml .Values.frontendAffinity | nindent 12 }}
       imagePullSecrets:
         - name: ngc-secret
-      subdomain: default-subdomain
+      hostname: triton-frontend
       containers:
         - name: triton-speech-recognition-frontend
           image: "{{ .Values.frontEndImage.repository }}:{{ .Values.frontEndImage.tag | default .Chart.AppVersion }}"
@@ -111,7 +118,7 @@ spec:
             - /workspace/scripts/prepare_data.sh
           volumeMounts:
             - name: triton-frontend-storage
-              mountPath: /data
+              mountPath: /Kaldi/data
       volumes:
         - name: dshm
           emptyDir: {}
